@@ -195,21 +195,33 @@ function ProductsContent() {
             )}
           </div>
 
-          {/* Mobile Category Horizontal Row */}
-          <div className="lg:hidden w-full overflow-x-auto pb-4 flex gap-2 no-scrollbar">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => handleCategoryChange(cat)}
-                className={`whitespace-nowrap px-4 py-2 text-xs font-semibold uppercase tracking-wider border transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-black text-white dark:bg-white dark:text-black border-black dark:border-white'
-                    : 'bg-white dark:bg-[hsl(240_6%_15%)] text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] border-[hsl(240_5%_64.9%)/0.2]'
-                }`}
+          {/* Mobile Category Compact Dropdown */}
+          <div className="lg:hidden w-full flex items-center gap-3">
+            <div className="relative flex-1">
+              <SlidersHorizontal className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-[hsl(240_6%_15%)] border border-[hsl(240_5%_64.9%)/0.2] focus:outline-none focus:border-black dark:focus:border-white rounded-none cursor-pointer appearance-none font-medium"
               >
-                {cat}
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            {(selectedCategory !== 'All' || searchTerm !== '' || sortBy !== 'featured') && (
+              <button
+                onClick={clearAllFilters}
+                className="shrink-0 px-3 py-2.5 border border-dashed border-red-400/60 text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 text-xs font-semibold uppercase tracking-wider transition-all"
+              >
+                Clear
               </button>
-            ))}
+            )}
           </div>
 
           {/* Products Grid Area */}

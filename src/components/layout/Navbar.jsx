@@ -36,7 +36,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 w-full border-b border-[hsl(240_5%_64.9%)/0.1] bg-[hsl(0_0%_98%)/0.75] dark:bg-[hsl(240_10%_3.9%)/0.75] backdrop-blur-md transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+   
           <div className="flex-shrink-0">
             <Link
               href="/"
@@ -58,19 +58,7 @@ const Navbar = () => {
               href="/products"
               className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
             >
-              Shop
-            </Link>
-            <Link
-              href="/products?category=Panjabi"
-              className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
-            >
-              Panjabi
-            </Link>
-            <Link
-              href="/products?category=T-Shirts"
-              className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
-            >
-              T-Shirts
+              Products
             </Link>
           </div>
 
@@ -167,7 +155,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 rounded-md text-base font-medium text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] hover:bg-[hsl(240_5%_64.9%)/0.1]"
             >
-              Shop
+              Products
             </Link>
             <Link
               href="/wishlist"
