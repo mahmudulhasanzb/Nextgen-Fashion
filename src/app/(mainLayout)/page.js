@@ -1,65 +1,99 @@
 import Image from "next/image";
+import Link from "next/link";
+import BannerSection from "@/components/BannerSection";
+import { products } from "@/data/products";
+import { Star, ArrowRight } from "lucide-react";
 
 export default function Home() {
+  // Get 4 featured products for User Story 4.3
+  const featuredProducts = products.slice(0, 4);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex flex-col min-h-screen bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_10%_3.9%)] transition-colors duration-300">
+      {/* Dynamic Banner/Hero Section via SwiperJS */}
+      <BannerSection />
+
+      {/* Featured Grid Section (User Story 4.3) */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)]">
+              Curated Selection
+            </span>
+            <h2 className="text-3xl font-bold tracking-tight text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] mt-2">
+              Featured Collections
+            </h2>
+          </div>
+          <Link
+            href="/shop"
+            className="group inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wider text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] mt-4 md:mt-0 hover:underline underline-offset-4"
+          >
+            Explore All Products
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </Link>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          {featuredProducts.map((product) => (
+            <Link
+              href={`/products/${product.id}`}
+              key={product.id}
+              className="group flex flex-col border border-[hsl(240_5%_64.9%)/0.1] bg-white dark:bg-[hsl(240_6%_15%)] hover:shadow-lg transition-all duration-300 relative"
+            >
+              {/* Product Image */}
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800">
+                <Image
+                  src={product.images[0]}
+                  alt={product.name}
+                  fill
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 25vw"
+                />
+                
+                {/* Stock status indicator */}
+                {!product.inStock && (
+                  <div className="absolute top-3 left-3 bg-black/75 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1">
+                    Out of Stock
+                  </div>
+                )}
+              </div>
+
+              {/* Product Info */}
+              <div className="p-5 flex flex-col flex-1 justify-between">
+                <div>
+                  <span className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)]">
+                    {product.category}
+                  </span>
+                  <h3 className="text-sm font-medium text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] mt-1 line-clamp-1">
+                    {product.name}
+                  </h3>
+                  
+                  {/* Rating */}
+                  <div className="flex items-center gap-1 mt-2">
+                    <div className="flex text-amber-400">
+                      <Star className="w-3.5 h-3.5 fill-current" />
+                    </div>
+                    <span className="text-xs font-semibold text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)]">
+                      {product.rating}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-[hsl(240_5%_64.9%)/0.1]">
+                  <span className="text-sm font-semibold text-[hsl(142_70%_29%)] dark:text-[hsl(142_76%_36%)]">
+                    ৳{product.price}
+                  </span>
+                  <span className="text-xs font-medium uppercase tracking-wider text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] group-hover:underline">
+                    View Details
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </main>
     </div>
   );
 }
+
