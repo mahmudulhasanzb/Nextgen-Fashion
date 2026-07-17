@@ -1,106 +1,170 @@
-import React from 'react'
-import Link from 'next/link'
-import { Mail, Phone, ArrowUpRight, Globe } from 'lucide-react'
-import {LogoFacebook} from '@gravity-ui/icons';
-
+import React from 'react';
+import Link from 'next/link';
+import { Mail, MessageSquare, Phone } from 'lucide-react';
+import { LocationArrow, LogoFacebook } from '@gravity-ui/icons';
 
 const Footer = () => {
   return (
-    <footer className="border-t border-[hsl(240_5%_64.9%)/0.2] bg-[hsl(30_20%_95%)] dark:bg-[hsl(240_6%_15%)] text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Brand info */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold tracking-wider uppercase">NextGen Fashion</h3>
-            <p className="text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] max-w-xs">
-              Minimal Luxury. Curated apparel for the modern individual.
+    <footer className="w-full bg-[#0A0D02] border-t border-[#1C210E] pt-16 pb-8 text-[#A4A896]/70 transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-12">
+
+          <div className="col-span-1 md:col-span-6 flex flex-col space-y-5">
+            <h2 className="text-white font-black text-2xl tracking-wider select-none">
+              NextGen Fashion
+            </h2>
+            <p className="text-[#A4A896]/80 text-[15px] leading-relaxed max-w-sm">
+              Premium fashion for the modern individual.
             </p>
+            
+            {/* Social Icons */}
+            <div className="flex items-center space-x-5 pt-2">
+              <a
+                href="https://facebook.com/mahmudulhasanzb"
+                className="text-[#A4A896]/60 hover:text-[#D4FF00] transition-colors duration-250 flex items-center justify-center"
+                aria-label="Facebook"
+              >
+                <LogoFacebook className="h-6 w-6 fill-current" />
+              </a>
+              <a
+                href="#"
+                className="text-[#A4A896]/60 hover:text-[#D4FF00] transition-colors duration-250"
+                aria-label="Chat"
+              >
+                <MessageSquare className="h-5 w-5 stroke-[1.8]" />
+              </a>
+            </div>
           </div>
 
-          {/* Shop links */}
-          <div>
-            <h4 className="text-sm font-semibold tracking-wider uppercase mb-4">Shop</h4>
-            <ul className="space-y-2 text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)]">
-              <li>
-                <Link href="/shop" className="hover:text-primary transition-colors inline-flex items-center gap-0.5">
-                  All Collections <ArrowUpRight className="w-3.5 h-3.5" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=Panjabi" className="hover:text-primary transition-colors">
-                  Panjabi
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=T-Shirts" className="hover:text-primary transition-colors">
-                  T-Shirts
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=Hoodies" className="hover:text-primary transition-colors">
-                  Hoodies
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Right Side: Columns */}
+          <div className="col-span-1 md:col-span-6 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            {/* Column 1: Platform */}
+            <div className="flex flex-col space-y-4">
+              <h3 className="text-white font-extrabold text-[12px] tracking-widest uppercase select-none">
+                Company
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link
+                    href="#"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/products"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/services"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    Services
+                  </Link>
+                </li>
+              </ul>
+            </div>
 
-          {/* Company & Info */}
-          <div>
-            <h4 className="text-sm font-semibold tracking-wider uppercase mb-4">Support</h4>
-            <ul className="space-y-2 text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)]">
-              <li>
-                <Link href="/faq" className="hover:text-primary transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/shipping" className="hover:text-primary transition-colors">
-                  Shipping & Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="hover:text-primary transition-colors">
-                  Privacy Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact info */}
-          <div className="space-y-3">
-            <h4 className="text-sm font-semibold tracking-wider uppercase mb-4">Contact</h4>
-            <a 
-              href="mailto:hello@oxivos.com" 
-              className="flex items-center gap-2 text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] hover:text-primary transition-colors"
-            >
-              <Mail className="w-4 h-4" />
-              <span>hello@nextgen-shop.com</span>
-            </a>
-            <a 
-              href="tel:01756324620" 
-              className="flex items-center gap-2 text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] hover:text-primary transition-colors"
-            >
-              <Phone className="w-4 h-4" />
-              <span>01756324620</span>
-            </a>
+            {/* Column 2: Support */}
+            <div className="col-span-2 sm:col-span-1 flex flex-col space-y-4">
+              <h3 className="text-white font-extrabold text-[12px] tracking-widest uppercase select-none">
+                Support
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <Link
+                    href="#"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    FAQ
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="#"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    Shipping Returns
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/privacy-policy"
+                    className="hover:text-white transition-colors duration-200"
+                  >
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            {/* Column 3: Contact*/}
+            <div className="col-span-2 sm:col-span-1 flex flex-col space-y-4">
+              <h3 className="text-white font-extrabold text-[12px] tracking-widest uppercase select-none">
+                Contact
+              </h3>
+              <ul className="space-y-2.5 text-sm">
+                <li>
+                  <a
+                    href="email:hello@nextgen.com"
+                    className="hover:text-white transition-colors duration-200 flex items-center gap-2"
+                  >
+                    <Mail className="h-4 w-4" />
+                    hello@nextgen.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="tel:+8801726000816"
+                    className="hover:text-white transition-colors duration-200 flex items-center gap-2"
+                  >
+                    <Phone className="h-4 w-4" />
+                    +8801726000816
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://maps.app.goo.gl/t9zQ5P45678901234"
+                    className="hover:text-white transition-colors duration-200 flex items-center gap-2"
+                  >
+                    <LocationArrow className="h-4 w-4" />
+                    Dhaka, Bangladesh
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        {/* Footer bottom */}
-        <div className="mt-12 pt-8 border-t border-[hsl(240_5%_64.9%)/0.1] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)]">
-          <p>© {new Date().getFullYear()} NextGen Fashion. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-             <LogoFacebook />
-            </a>
-            <a href="https://mahmudulhasan-dev.vercel.app" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
-              <Globe className="w-4 h-4" />
-            </a>
-          </div>
+        {/* Bottom Bar */}
+        <div className="border-t border-[#1C210E]/40 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-[#A4A896]/45">
+          <p className="select-none">
+            &copy; {new Date().getFullYear()}{' '}
+            <span className="text-[#A4A896] font-semibold italic transition-colors duration-250 hover:cursor-pointer">
+              NextGen Fashion
+            </span>
+            . All rights reserved.
+          </p>
+          <p className="text-[#A4A896]/45 select-none">
+            Developed by{' '}
+            <Link
+              href="https://www.linkedin.com/in/mahmudulhasanzb/"
+              target="_blank"
+              className="text-[#A4A896] font-semibold italic transition-colors duration-250 hover:text-[#D4FF00] hover:cursor-pointer"
+            >
+              Mahmudul Hasan{' '}
+              <span className="animate-pulse text-[#00FF37]">&gt;</span>
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
