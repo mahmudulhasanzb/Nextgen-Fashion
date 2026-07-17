@@ -2,6 +2,12 @@
 
 # dependencies
 /node_modules
+.env
+.cursorrules
+architecture.md
+tasks.md
+feature.md
+Design.md
 /.pnp
 .pnp.*
 .yarn/*
