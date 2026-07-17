@@ -53,19 +53,19 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              href="/shop"
+              href="/products"
               className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
             >
               Shop
             </Link>
             <Link
-              href="/shop?category=Panjabi"
+              href="/products?category=Panjabi"
               className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
             >
               Panjabi
             </Link>
             <Link
-              href="/shop?category=T-Shirts"
+              href="/products?category=T-Shirts"
               className="hover:text-[hsl(240_10%_3.9%)] dark:hover:text-[hsl(0_0%_98%)] transition-colors"
             >
               T-Shirts
@@ -161,7 +161,7 @@ const Navbar = () => {
               Home
             </Link>
             <Link
-              href="/shop"
+              href="/products"
               onClick={() => setIsOpen(false)}
               className="block px-3 py-2 rounded-md text-base font-medium text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] hover:bg-[hsl(240_5%_64.9%)/0.1]"
             >
