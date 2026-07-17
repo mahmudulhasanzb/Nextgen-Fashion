@@ -1,90 +1,37 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, Loader2, CheckCircle2, ShieldCheck, Tag } from 'lucide-react';
-import { products } from '@/data/products';
-
-// Mock initial cart items using products from products.js
-const initialCart = [
-  {
-    id: 1,
-    product: products[0], // Classic Cotton Panjabi
-    color: 'Navy',
-    size: 'L',
-    quantity: 1,
-  },
-  {
-    id: 3,
-    product: products[2], // Minimalist Oversized Tee
-    color: 'Black',
-    size: 'XL',
-    quantity: 2,
-  }
-];
+import { useCart } from '@/context/CartContext';
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
+  const {
+    cartItems,
+    subtotal,
+    vat,
+    shipping,
+    total,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    isLoaded,
+  } = useCart();
+
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
-  const [discount, setDiscount] = useState(0);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  // Load items
-  useEffect(() => {
-    // Attempt load from localStorage or fallback to initialCart
-    const localCart = localStorage.getItem('nextgen_temp_cart');
-    if (localCart) {
-      try {
-        setCartItems(JSON.parse(localCart));
-      } catch (e) {
-        setCartItems(initialCart);
-      }
-    } else {
-      setCartItems(initialCart);
-    }
-  }, []);
-
-  // Save changes
-  const saveCart = (newCart) => {
-    setCartItems(newCart);
-    localStorage.setItem('nextgen_temp_cart', JSON.stringify(newCart));
-  };
-
-  // Adjust quantity (User Story 7.2)
-  const updateQuantity = (itemId, delta) => {
-    const updated = cartItems.map((item) => {
-      if (item.id === itemId) {
-        const newQty = item.quantity + delta;
-        return { ...item, quantity: newQty > 0 ? newQty : 1 };
-      }
-      return item;
-    });
-    saveCart(updated);
-  };
-
-  // Remove item (User Story 7.3)
-  const removeItem = (itemId) => {
-    const updated = cartItems.filter((item) => item.id !== itemId);
-    saveCart(updated);
-    setConfirmDeleteId(null);
-  };
-
-  // Recalculations
-  const subtotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
-  const vat = Math.round(subtotal * 0.05); // 5% VAT
-  const shipping = subtotal > 2500 || subtotal === 0 ? 0 : 120; // Free shipping over 2500
-  const finalDiscount = promoApplied ? Math.round(subtotal * 0.1) : 0; // 10% promo discount
-  const total = subtotal + vat + shipping - finalDiscount;
+  const finalDiscount = promoApplied ? Math.round(subtotal * 0.1) : 0;
+  const finalTotal = total - finalDiscount;
 
   const handleApplyPromo = (e) => {
     e.preventDefault();
     if (promoCode.trim().toUpperCase() === 'NEXTGEN10') {
       setPromoApplied(true);
-      setDiscount(10);
     } else {
       alert('Invalid promo code. Try "NEXTGEN10" for 10% off!');
     }
@@ -92,11 +39,11 @@ export default function CartPage() {
 
   const handleCheckout = () => {
     setIsCheckingOut(true);
-    // Simulate API request (User Story 7.5)
+    // Simulate checkout (User Story 7.5)
     setTimeout(() => {
       setIsCheckingOut(false);
       setCheckoutSuccess(true);
-      saveCart([]); // Clear cart after successful checkout
+      clearCart();
     }, 2000);
   };
 
@@ -125,7 +72,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_10%_3.9%)] text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] transition-colors duration-300 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="border-b border-[hsl(240_5%_64.9%)/0.1] pb-8 mb-8">
           <h1 className="text-4xl font-bold tracking-tight uppercase">Your Shopping Cart</h1>
@@ -134,7 +81,11 @@ export default function CartPage() {
           </p>
         </div>
 
-        {cartItems.length === 0 ? (
+        {!isLoaded ? (
+          <div className="flex items-center justify-center py-24">
+            <Loader2 className="w-7 h-7 animate-spin text-zinc-400" />
+          </div>
+        ) : cartItems.length === 0 ? (
           // Empty Cart State (User Story 7.4)
           <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-[hsl(240_6%_15%)] border border-[hsl(240_5%_64.9%)/0.1] px-4">
             <div className="w-12 h-12 text-zinc-400 dark:text-zinc-600 mb-4">
@@ -184,19 +135,16 @@ export default function CartPage() {
                             </Link>
                           </h3>
                         </div>
-                        <span className="text-sm font-bold text-zinc-950 dark:text-zinc-50">
-                          ৳{item.product.price}
+                        <span className="text-sm font-bold text-zinc-950 dark:text-zinc-50 whitespace-nowrap">
+                          ৳{item.product.price * item.quantity}
                         </span>
                       </div>
 
                       {/* Config details */}
                       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 mt-2">
-                        <div>
-                          <span className="font-medium text-zinc-400">Color:</span> {item.color}
-                        </div>
-                        <div>
-                          <span className="font-medium text-zinc-400">Size:</span> {item.size}
-                        </div>
+                        <div><span className="font-medium text-zinc-400">Color:</span> {item.color}</div>
+                        <div><span className="font-medium text-zinc-400">Size:</span> {item.size}</div>
+                        <div><span className="font-medium text-zinc-400">Unit:</span> ৳{item.product.price}</div>
                       </div>
                     </div>
 
@@ -204,7 +152,7 @@ export default function CartPage() {
                       {/* Quantity Selector */}
                       <div className="flex items-center border border-[hsl(240_5%_64.9%)/0.2] bg-zinc-50 dark:bg-zinc-850">
                         <button
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
                           className="px-2.5 py-1 text-zinc-500 hover:text-black dark:hover:text-white"
                           aria-label="Decrease quantity"
                         >
@@ -214,7 +162,7 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
                           className="px-2.5 py-1 text-zinc-500 hover:text-black dark:hover:text-white"
                           aria-label="Increase quantity"
                         >
@@ -227,7 +175,7 @@ export default function CartPage() {
                         {confirmDeleteId === item.id ? (
                           <div className="flex gap-2">
                             <button
-                              onClick={() => removeItem(item.id)}
+                              onClick={() => { removeFromCart(item.id); setConfirmDeleteId(null); }}
                               className="text-xs bg-red-600 text-white font-semibold uppercase tracking-wider px-2.5 py-1 hover:bg-red-700 transition-all"
                             >
                               Yes
@@ -288,7 +236,7 @@ export default function CartPage() {
                 )}
                 <div className="flex justify-between font-bold text-base pt-3 border-t border-[hsl(240_5%_64.9%)/0.1]">
                   <span>Total</span>
-                  <span className="text-[hsl(142_70%_29%)] dark:text-[hsl(142_76%_36%)]">৳{total}</span>
+                  <span className="text-[hsl(142_70%_29%)] dark:text-[hsl(142_76%_36%)]">৳{finalTotal}</span>
                 </div>
               </div>
 

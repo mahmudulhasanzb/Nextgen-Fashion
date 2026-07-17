@@ -5,6 +5,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { products } from '@/data/products';
 import { Star, Minus, Plus, Heart, ShoppingBag, ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 
 export default function ProductDetailPage({ params }) {
   // Unwrap params using React.use() for Next.js 15/16 App Router compatibility
@@ -14,6 +16,9 @@ export default function ProductDetailPage({ params }) {
   // Find product
   const product = products.find((p) => p.id === productId);
 
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
   // States
   const [activeImage, setActiveImage] = useState(product ? product.images[0] : '');
   const [selectedColor, setSelectedColor] = useState('');
@@ -21,7 +26,8 @@ export default function ProductDetailPage({ params }) {
   const [quantity, setQuantity] = useState(1);
   const [errorFeedback, setErrorFeedback] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  
+  const isWishlisted = product ? isInWishlist(product.id) : false;
 
   // If product not found
   if (!product) {
@@ -67,7 +73,8 @@ export default function ProductDetailPage({ params }) {
       return;
     }
 
-    // Success feedback (Simulating adding to cart)
+    addToCart(product, selectedColor, selectedSize, quantity);
+
     setSuccessMessage(`Successfully added ${quantity}x ${product.name} (${selectedColor}, Size: ${selectedSize}) to your cart.`);
     
     // Clear message after 4 seconds
@@ -285,7 +292,7 @@ export default function ProductDetailPage({ params }) {
 
               {/* Wishlist CTA */}
               <button
-                onClick={() => setIsWishlisted(!isWishlisted)}
+                onClick={() => toggleWishlist(product)}
                 className="w-full flex items-center justify-center gap-2 py-3 border border-[hsl(240_10%_3.9%)] dark:border-[hsl(0_0%_98%)] hover:bg-[hsl(240_10%_3.9%)] hover:text-white dark:hover:bg-[hsl(0_0%_98%)] dark:hover:text-black text-xs font-semibold uppercase tracking-wider transition-all"
               >
                 <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />

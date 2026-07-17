@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShoppingBag, Heart, Sun, Moon, Menu, X, User } from 'lucide-react';
 
+import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
+
 const Navbar = () => {
   const [theme, setTheme] = useState('light');
   const [isOpen, setIsOpen] = useState(false);
 
-  // Placeholders/Fallback for cart & wishlist counts (until Contexts are created)
-  const cartCount = 3;
-  const wishlistCount = 2;
+  const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
 
   useEffect(() => {
     // Sync with HTML class
