@@ -1,304 +1,251 @@
 'use client';
 
-import React, { useState } from 'react';
-import Image from 'next/image';
+import React from 'react';
 import Link from 'next/link';
-import { Minus, Plus, Trash2, ArrowRight, ShoppingBag, Loader2, CheckCircle2, ShieldCheck, Tag } from 'lucide-react';
+import Image from 'next/image';
+import { Trash2, ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import toast from 'react-hot-toast';
 
 export default function CartPage() {
-  const {
-    cartItems,
-    subtotal,
-    vat,
-    shipping,
-    total,
-    updateQuantity,
-    removeFromCart,
-    clearCart,
-    isLoaded,
-  } = useCart();
+  const { cartItems, removeFromCart, updateQty, clearCart, subtotal, totalItems } = useCart();
+  const total = subtotal;
 
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [checkoutSuccess, setCheckoutSuccess] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
-  const [promoApplied, setPromoApplied] = useState(false);
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
-  const finalDiscount = promoApplied ? Math.round(subtotal * 0.1) : 0;
-  const finalTotal = total - finalDiscount;
-
-  const handleApplyPromo = (e) => {
-    e.preventDefault();
-    if (promoCode.trim().toUpperCase() === 'NEXTGEN10') {
-      setPromoApplied(true);
-    } else {
-      alert('Invalid promo code. Try "NEXTGEN10" for 10% off!');
-    }
+  const handleRemove = (id, name) => {
+    removeFromCart(id);
+    toast(`${name} removed from cart`, { icon: '🗑️' });
   };
 
-  const handleCheckout = () => {
-    setIsCheckingOut(true);
-    // Simulate checkout (User Story 7.5)
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      setCheckoutSuccess(true);
-      clearCart();
-    }, 2000);
-  };
-
-  if (checkoutSuccess) {
+  if (cartItems.length === 0) {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_10%_3.9%)] text-center px-4">
-        <div className="w-16 h-16 bg-green-100 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mb-6">
-          <CheckCircle2 className="w-10 h-10" />
-        </div>
-        <h2 className="text-2xl font-bold uppercase tracking-wide text-zinc-950 dark:text-zinc-50">Order Placed Successfully!</h2>
-        <p className="text-sm text-zinc-500 mt-2 max-w-sm leading-relaxed">
-          Thank you for your purchase. We have received your order and are preparing it for shipment.
-        </p>
-        <Link
-          href="/products"
-          onClick={() => setCheckoutSuccess(false)}
-          className="mt-8 inline-flex items-center gap-2 px-8 py-3 bg-black dark:bg-white text-white dark:text-black text-xs font-semibold uppercase tracking-wider transition-all"
+      <div
+        className="min-h-screen flex flex-col items-center justify-center gap-6 text-center"
+        style={{ background: 'var(--color-bg)' }}
+      >
+        <div
+          className="w-20 h-20 flex items-center justify-center rounded-full"
+          style={{
+            background: 'var(--color-surface)',
+            border: '1px solid var(--color-border)',
+          }}
         >
+          <ShoppingBag
+            size={32}
+            style={{ color: 'var(--color-text-faint)' }}
+            strokeWidth={1}
+          />
+        </div>
+        <div className="space-y-2">
+          <h1 className="heading-section">Your cart is empty</h1>
+          <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            Add some items to get started.
+          </p>
+        </div>
+        <Link href="/products" className="btn-accent">
+          <ArrowLeft size={15} />
           Continue Shopping
-          <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(0_0%_98%)] dark:bg-[hsl(240_10%_3.9%)] text-[hsl(240_10%_3.9%)] dark:text-[hsl(0_0%_98%)] transition-colors duration-300 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
+    <div style={{ background: 'var(--color-bg)', minHeight: '100vh' }}>
+      <div className="container-site py-10 md:py-14">
         {/* Header */}
-        <div className="border-b border-[hsl(240_5%_64.9%)/0.1] pb-8 mb-8">
-          <h1 className="text-4xl font-bold tracking-tight uppercase">Your Shopping Cart</h1>
-          <p className="text-sm text-[hsl(240_3.8%_46.1%)] dark:text-[hsl(240_5%_64.9%)] mt-2">
-            Review your selected fashion items and proceed to checkout.
-          </p>
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-1">
+            <span className="label-overline">Checkout</span>
+            <h1 className="heading-section">
+              Shopping Cart
+              <span
+                className="ml-3 text-base font-semibold"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
+                ({totalItems} {totalItems === 1 ? 'item' : 'items'})
+              </span>
+            </h1>
+          </div>
+          <button
+            onClick={() => {
+              clearCart();
+              toast('Cart cleared');
+            }}
+            className="text-xs font-semibold uppercase tracking-wider transition-colors duration-150 cursor-pointer"
+            style={{ color: 'var(--color-text-faint)' }}
+            onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
+            onMouseLeave={e =>
+              (e.currentTarget.style.color = 'var(--color-text-faint)')
+            }
+          >
+            Clear all
+          </button>
         </div>
 
-        {!isLoaded ? (
-          <div className="flex items-center justify-center py-24">
-            <Loader2 className="w-7 h-7 animate-spin text-zinc-400" />
-          </div>
-        ) : cartItems.length === 0 ? (
-          // Empty Cart State (User Story 7.4)
-          <div className="flex flex-col items-center justify-center py-20 text-center bg-white dark:bg-[hsl(240_6%_15%)] border border-[hsl(240_5%_64.9%)/0.1] px-4">
-            <div className="w-12 h-12 text-zinc-400 dark:text-zinc-600 mb-4">
-              <ShoppingBag className="w-full h-full stroke-1" />
-            </div>
-            <h3 className="text-lg font-medium mb-1">Your cart is currently empty</h3>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-6">Looks like you haven&apos;t added any products yet.</p>
-            <Link
-              href="/products"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-black dark:bg-white text-white dark:text-black text-xs font-semibold uppercase tracking-wider transition-all"
-            >
-              Back to Shop
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Cart Items List */}
-            <div className="lg:col-span-8 space-y-4">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex flex-col sm:flex-row gap-4 p-5 bg-white dark:bg-[hsl(240_6%_15%)] border border-[hsl(240_5%_64.9%)/0.1]"
-                >
-                  {/* Thumbnail */}
-                  <div className="relative w-full sm:w-24 aspect-[3/4] bg-zinc-100 dark:bg-zinc-800 flex-shrink-0">
-                    <Image
-                      src={item.product.images[0]}
-                      alt={item.product.name}
-                      fill
-                      className="object-cover object-center"
-                      sizes="96px"
-                    />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+          {/*Cart items*/}
+          <div className="space-y-3">
+            {cartItems.map(item => (
+              <div
+                key={item.id}
+                className="flex gap-4 p-4"
+                style={{
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                }}
+              >
+                {/* Image */}
+                <Link href={`/products/${item.id}`} className="flex-shrink-0">
+                  <div
+                    className="relative overflow-hidden"
+                    style={{
+                      width: '80px',
+                      height: '100px',
+                      background: '#0E1106',
+                    }}
+                  >
+                    {item.images?.[0] && (
+                      <Image
+                        src={item.images[0]}
+                        alt={item.name}
+                        fill
+                        className="object-cover object-top"
+                        sizes="80px"
+                      />
+                    )}
+                  </div>
+                </Link>
+
+                {/* Info */}
+                <div className="flex-1 flex flex-col justify-between min-w-0">
+                  <div>
+                    <Link
+                      href={`/products/${item.id}`}
+                      className="font-semibold text-sm leading-snug hover:text-[var(--color-accent)] transition-colors"
+                    >
+                      {item.name}
+                    </Link>
                   </div>
 
-                  {/* Item Description */}
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div>
-                      <div className="flex justify-between items-start gap-4">
-                        <div>
-                          <span className="text-[10px] font-semibold text-zinc-400 uppercase tracking-widest">
-                            {item.product.category}
-                          </span>
-                          <h3 className="text-sm font-medium uppercase mt-0.5 line-clamp-1">
-                            <Link href={`/products/${item.product.id}`} className="hover:underline">
-                              {item.product.name}
-                            </Link>
-                          </h3>
-                        </div>
-                        <span className="text-sm font-bold text-zinc-950 dark:text-zinc-50 whitespace-nowrap">
-                          ৳{item.product.price * item.quantity}
-                        </span>
-                      </div>
-
-                      {/* Config details */}
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-500 mt-2">
-                        <div><span className="font-medium text-zinc-400">Color:</span> {item.color}</div>
-                        <div><span className="font-medium text-zinc-400">Size:</span> {item.size}</div>
-                        <div><span className="font-medium text-zinc-400">Unit:</span> ৳{item.product.price}</div>
-                      </div>
+                  <div className="flex items-center justify-between mt-3">
+                    {/* Qty stepper */}
+                    <div
+                      className="flex items-center"
+                      style={{ border: '1px solid var(--color-border)' }}
+                    >
+                      <button
+                        onClick={() => updateQty(item.id, item.qty - 1)}
+                        className="w-8 h-8 flex items-center justify-center text-base font-medium transition-colors hover:text-white cursor-pointer"
+                        style={{
+                          color: 'var(--color-text-muted)',
+                          borderRight: '1px solid var(--color-border)',
+                          background: 'transparent',
+                        }}
+                        aria-label="Decrease quantity"
+                      >
+                        −
+                      </button>
+                      <span className="w-10 h-8 flex items-center justify-center text-sm font-bold text-white">
+                        {item.qty}
+                      </span>
+                      <button
+                        onClick={() => updateQty(item.id, item.qty + 1)}
+                        className="w-8 h-8 flex items-center justify-center text-base font-medium transition-colors hover:text-white cursor-pointer"
+                        style={{
+                          color: 'var(--color-text-muted)',
+                          borderLeft: '1px solid var(--color-border)',
+                          background: 'transparent',
+                        }}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
                     </div>
 
-                    <div className="flex justify-between items-end mt-6">
-                      {/* Quantity Selector */}
-                      <div className="flex items-center border border-[hsl(240_5%_64.9%)/0.2] bg-zinc-50 dark:bg-zinc-850">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="px-2.5 py-1 text-zinc-500 hover:text-black dark:hover:text-white"
-                          aria-label="Decrease quantity"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="w-8 text-center text-xs font-semibold select-none">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="px-2.5 py-1 text-zinc-500 hover:text-black dark:hover:text-white"
-                          aria-label="Increase quantity"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Delete / Remove Action */}
-                      <div className="relative">
-                        {confirmDeleteId === item.id ? (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => { removeFromCart(item.id); setConfirmDeleteId(null); }}
-                              className="text-xs bg-red-600 text-white font-semibold uppercase tracking-wider px-2.5 py-1 hover:bg-red-700 transition-all"
-                            >
-                              Yes
-                            </button>
-                            <button
-                              onClick={() => setConfirmDeleteId(null)}
-                              className="text-xs bg-zinc-200 dark:bg-zinc-800 font-semibold uppercase tracking-wider px-2.5 py-1 transition-all"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => setConfirmDeleteId(item.id)}
-                            className="text-zinc-400 hover:text-red-500 p-1 transition-colors"
-                            aria-label="Delete item"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
+                    {/* Line total + remove */}
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-bold text-white">
+                        ৳ {item.price * item.qty}
+                      </span>
+                      <button
+                        onClick={() => handleRemove(item.id, item.name)}
+                        className="p-1.5 transition-colors duration-150 cursor-pointer hover:text-red-500"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <Trash2 size={15} />
+                      </button>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
 
-            {/* Summary Panel */}
-            <div className="lg:col-span-4 p-6 bg-white dark:bg-[hsl(240_6%_15%)] border border-[hsl(240_5%_64.9%)/0.1] space-y-6">
-              <h2 className="text-base font-semibold uppercase tracking-wider pb-3 border-b border-[hsl(240_5%_64.9%)/0.1]">
+            {/* Continue shopping */}
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 mt-2 text-xs font-semibold uppercase tracking-wider transition-colors duration-150 hover:text-[var(--color-accent)]"
+              style={{ color: 'var(--color-text-muted)' }}
+            >
+              <ArrowLeft size={13} />
+              Continue Shopping
+            </Link>
+          </div>
+
+          {/* Order summary sidebar */}
+          <div className="h-fit" style={{ position: 'sticky', top: '6rem' }}>
+            <div
+              className="p-6 space-y-5"
+              style={{
+                background: 'var(--color-surface)',
+                border: '1px solid var(--color-border)',
+              }}
+            >
+              <h2
+                className="text-sm font-bold uppercase tracking-widest"
+                style={{ color: 'var(--color-text-muted)' }}
+              >
                 Order Summary
               </h2>
 
-              {/* Price Breakdown */}
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">Subtotal</span>
-                  <span>৳{subtotal}</span>
-                </div>
-                {promoApplied && (
-                  <div className="flex justify-between text-green-600 dark:text-green-400">
-                    <span>Discount (10% Code)</span>
-                    <span>-৳{finalDiscount}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">Estimated VAT (5%)</span>
-                  <span>৳{vat}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-zinc-500">Shipping</span>
-                  <span>{shipping === 0 ? 'Free' : `৳${shipping}`}</span>
-                </div>
-                {shipping > 0 && (
-                  <p className="text-[10px] text-zinc-400 text-right">
-                    Spend ৳{2500 - subtotal} more for free shipping
-                  </p>
-                )}
-                <div className="flex justify-between font-bold text-base pt-3 border-t border-[hsl(240_5%_64.9%)/0.1]">
-                  <span>Total</span>
-                  <span className="text-[hsl(142_70%_29%)] dark:text-[hsl(142_76%_36%)]">৳{finalTotal}</span>
-                </div>
-              </div>
-
-              {/* Promo Code Box */}
-              <form onSubmit={handleApplyPromo} className="pt-2">
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
-                    <input
-                      type="text"
-                      placeholder="Promo Code"
-                      value={promoCode}
-                      onChange={(e) => setPromoCode(e.target.value)}
-                      disabled={promoApplied}
-                      className="w-full pl-9 pr-3 py-2 text-xs bg-zinc-50 dark:bg-zinc-800 border border-[hsl(240_5%_64.9%)/0.2] focus:outline-none focus:border-black dark:focus:border-white rounded-none disabled:opacity-50"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={promoApplied}
-                    className="px-4 py-2 border border-black dark:border-white text-xs font-semibold uppercase tracking-wider hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all disabled:opacity-50"
-                  >
-                    Apply
-                  </button>
-                </div>
-                {promoApplied && (
-                  <p className="text-[10px] text-green-600 dark:text-green-400 mt-2 font-medium">
-                    Code NEXTGEN10 applied successfully!
-                  </p>
-                )}
-              </form>
-
-              {/* Guarantee badge */}
-              <div className="flex items-start gap-3 p-3 bg-zinc-50 dark:bg-zinc-800/40 text-[11px] text-zinc-500 border border-[hsl(240_5%_64.9%)/0.05]">
-                <ShieldCheck className="w-4 h-4 text-zinc-400 flex-shrink-0 mt-0.5" />
-                <p className="leading-relaxed font-light">
-                  Secure checkout guaranteed. 100% genuine fashion products with simplified return window options.
-                </p>
-              </div>
-
-              {/* Checkout Action */}
-              <button
-                onClick={handleCheckout}
-                disabled={isCheckingOut}
-                className="w-full py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-zinc-800 dark:hover:bg-zinc-100 text-xs font-semibold uppercase tracking-wider flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
+              {/* Line items */}
+              <div
+                className="space-y-3 pt-1"
+                style={{ borderTop: '1px solid var(--color-border)' }}
               >
-                {isCheckingOut ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Processing Order...
-                  </>
-                ) : (
-                  <>
-                    Proceed to Checkout
-                    <ArrowRight className="w-4 h-4" />
-                  </>
-                )}
+                <div className="flex justify-between text-sm pt-3">
+                  <span style={{ color: 'var(--color-text-muted)' }}>
+                    Subtotal
+                  </span>
+                  <span className="font-semibold text-white">{subtotal}</span>
+                </div>
+              </div>
+
+              {/* Total */}
+              <div
+                className="flex justify-between items-center pt-4"
+                style={{ borderTop: '1px solid var(--color-border)' }}
+              >
+                <span className="text-sm font-bold uppercase tracking-wider text-white">
+                  Total
+                </span>
+                <span className="text-xl font-black text-white">{total}</span>
+              </div>
+
+              {/* Checkout CTA */}
+              <button className="btn-accent w-full mt-2">
+                Proceed to Checkout
+                <ArrowRight size={15} />
               </button>
+
+              <p
+                className="text-center text-[11px]"
+                style={{ color: 'var(--color-text-faint)' }}
+              >
+                Secure checkout. Taxes calculated at next step.
+              </p>
             </div>
           </div>
-        )}
-
+        </div>
       </div>
     </div>
   );

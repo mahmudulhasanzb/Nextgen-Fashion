@@ -4,11 +4,15 @@ const nextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
-
       {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: '*',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ibb.co',
+        pathname: '**',
       },
     ],
   },
